@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GenericShelterControllerAdvice {
     @ExceptionHandler(ShelterBrainException.class)
-    public ResponseEntity genericShelterBrainExceptionHandler(ShelterBrainException exception) {
+    public ResponseEntity<?> genericShelterBrainExceptionHandler(ShelterBrainException exception) {
         return ResponseEntity
                 .status(exception.getHttpStatus())
                 .body(exception.getResponseMessage());
