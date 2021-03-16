@@ -6,7 +6,7 @@ import com.gjm.shelterbrainbackend.report.converter.ShelterReportConverter;
 import com.gjm.shelterbrainbackend.report.converter.WebShelterReportConverter;
 
 public class ShelterReportConverterFactory {
-    public static ShelterReportConverter getInstanceByFormat(String format) {
+    public static ShelterReportConverter<?> getInstanceByFormat(String format) {
         switch(format) {
             case "web":
                 return new WebShelterReportConverter();
@@ -15,7 +15,7 @@ public class ShelterReportConverterFactory {
             case "csv":
                 return new CsvShelterReportConverter();
             default:
-                throw new IllegalArgumentException("Nieznany format raportu - " + format);
+                throw new IllegalArgumentException("Illegal report format - " + format);
         }
     }
 }

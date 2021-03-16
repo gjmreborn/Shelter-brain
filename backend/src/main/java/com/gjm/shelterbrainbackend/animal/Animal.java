@@ -36,5 +36,5 @@ public class Animal {
     private String base64Image;
 
     @CreatedDate
-    private LocalDateTime dateOfAdd;
+    private LocalDateTime dateOfArrival;
 }

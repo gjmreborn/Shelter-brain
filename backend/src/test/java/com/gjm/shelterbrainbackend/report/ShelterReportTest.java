@@ -12,6 +12,6 @@ public class ShelterReportTest {
         shelterReport.setOccupiedPlaces(5);
         shelterReport.setMaxAnimals(12);
 
-        assertEquals("5 / 12 zajetych miejsc", shelterReport.getOccupancyMessage());
+        assertEquals("5 / 12 occupied places", shelterReport.getOccupancyMessage());
     }
 }

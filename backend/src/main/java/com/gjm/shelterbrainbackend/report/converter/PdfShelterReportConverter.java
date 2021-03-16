@@ -13,38 +13,34 @@ import lombok.EqualsAndHashCode;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Stream;
 
 @EqualsAndHashCode
 public class PdfShelterReportConverter implements ShelterReportConverter<byte[]> {
-    private ShelterReport shelterReport;
-
     @Override
     public byte[] convert(ShelterReport shelterReport) {
-        this.shelterReport = shelterReport;
-
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             Document pdf = new Document();
             PdfWriter.getInstance(pdf, byteArrayOutputStream);
             pdf.open();
 
-            PdfPTable animalsTable = new PdfPTable(5);
+            PdfPTable animalsTable = new PdfPTable(ShelterReport.getReportHeaders().size());
             addHeader(animalsTable);
-            addRows(animalsTable);
+            addRows(animalsTable, shelterReport.getAnimals());
 
             pdf.add(animalsTable);
-            addAdditionalData(pdf);
+            addAdditionalData(pdf, shelterReport);
 
             pdf.close();
             return byteArrayOutputStream.toByteArray();
-        } catch(IOException exc) {
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }
 
     private void addHeader(PdfPTable table) {
-        Stream.of(ShelterReport.getAnimalsHeaders())
+        ShelterReport.getReportHeaders()
                 .forEach(cell -> {
                     PdfPCell headerCell = new PdfPCell();
 
@@ -56,21 +52,20 @@ public class PdfShelterReportConverter implements ShelterReportConverter<byte[]>
                 });
     }
 
-    private void addRows(PdfPTable table) {
-        List<Animal> animals = shelterReport.getAnimals();
-
-        for(int i = 0; i < animals.size();i++) {
-            Animal animal = animals.get(i);
-
-            table.addCell((i + 1) + "");
+    private void addRows(PdfPTable table, List<Animal> animals) {
+        DateTimeFormatter formatter = ShelterReport.getDateTimeFormatter();
+        int no = 1;
+        for(Animal animal : animals) {
+            table.addCell(Integer.toString(no));
             table.addCell(animal.getName());
             table.addCell(animal.getGender().toString());
-            table.addCell(animal.getAge() + "");
-            table.addCell(animal.getDateOfAdd().format(ShelterReport.getDateTimeFormatter()));
+            table.addCell(Integer.toString(animal.getAge()));
+            table.addCell(animal.getDateOfArrival().format(formatter));
+            no++;
         }
     }
 
-    private void addAdditionalData(Document pdf) {
+    private void addAdditionalData(Document pdf, ShelterReport shelterReport) {
         pdf.add(new Paragraph(shelterReport.getOccupancyMessage()));
         pdf.add(new Paragraph(shelterReport.getShelterStatus().toString()));
     }

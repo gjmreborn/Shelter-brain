@@ -10,47 +10,45 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @EqualsAndHashCode
 public class CsvShelterReportConverter implements ShelterReportConverter<String> {
-    private ShelterReport shelterReport;
-
     @Override
     public String convert(ShelterReport shelterReport) {
-        this.shelterReport = shelterReport;
-
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            BufferedWriter csvOut = new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream));
-            CSVPrinter csvPrinter = new CSVPrinter(csvOut, CSVFormat.DEFAULT.withHeader(ShelterReport.getAnimalsHeaders()))) {
-
-            addRows(csvPrinter);
-            addAdditionalData(csvOut);
+        String[] reportHeaders = ShelterReport.getReportHeaders().toArray(new String[0]);
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             BufferedWriter csvOut = new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream));
+             CSVPrinter csvPrinter = new CSVPrinter(csvOut, CSVFormat.DEFAULT.withHeader(reportHeaders))) {
+            addRows(csvPrinter, shelterReport.getAnimals());
+            addAdditionalData(csvOut, shelterReport);
 
             csvOut.flush();
-            return new String(byteArrayOutputStream.toByteArray());
-        } catch(IOException exc) {
+            return byteArrayOutputStream.toString();
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }
 
-    private void addRows(CSVPrinter csv) throws IOException {
-        List<Animal> animals = shelterReport.getAnimals();
-
-        for(int i = 0; i < animals.size();i++) {
-            Animal animal = animals.get(i);
-
+    private void addRows(CSVPrinter csv, List<Animal> animals)
+            throws IOException {
+        DateTimeFormatter formatter = ShelterReport.getDateTimeFormatter();
+        int no = 1;
+        for(Animal animal : animals) {
             csv.printRecord(
-                    i + 1,
+                    no,
                     animal.getName(),
                     animal.getGender().toString(),
                     animal.getAge(),
-                    animal.getDateOfAdd().format(ShelterReport.getDateTimeFormatter())
+                    animal.getDateOfArrival().format(formatter)
             );
+            no++;
         }
     }
 
-    private void addAdditionalData(BufferedWriter csv) throws IOException {
+    private void addAdditionalData(BufferedWriter csv, ShelterReport shelterReport)
+            throws IOException {
         csv.newLine();
         csv.write(shelterReport.getOccupancyMessage());
         csv.newLine();

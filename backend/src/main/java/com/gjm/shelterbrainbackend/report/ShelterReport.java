@@ -5,6 +5,7 @@ import com.gjm.shelterbrainbackend.animal.ShelterStatus;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -14,8 +15,19 @@ public class ShelterReport {
     private int occupiedPlaces;
     private ShelterStatus shelterStatus;
 
-    public static String[] getAnimalsHeaders() {
-        return new String[] {"Lp.", "Imie", "Plec", "Wiek", "Data przybycia"};
+    public ShelterReport() {
+        this(Collections.emptyList(), 0);
+    }
+
+    public ShelterReport(List<Animal> animals, int maxAnimals) {
+        this.animals = animals;
+        this.maxAnimals = maxAnimals;
+        this.occupiedPlaces = animals.size();
+        this.shelterStatus = (occupiedPlaces == maxAnimals) ? ShelterStatus.FULL : ShelterStatus.HAS_PLACE;
+    }
+
+    public static List<String> getReportHeaders() {
+        return List.of("No.", "Name", "Gender", "Age", "Date of arrival");
     }
 
     public static DateTimeFormatter getDateTimeFormatter() {
@@ -23,6 +35,6 @@ public class ShelterReport {
     }
 
     public String getOccupancyMessage() {
-        return occupiedPlaces + " / " + maxAnimals + " zajetych miejsc";
+        return occupiedPlaces + " / " + maxAnimals + " occupied places";
     }
 }
