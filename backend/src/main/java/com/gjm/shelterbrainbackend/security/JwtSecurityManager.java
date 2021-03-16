@@ -12,26 +12,25 @@ public class JwtSecurityManager {
 
     public String idToJwt(long id) {
         return Jwts.builder()
-                .setSubject(id + "")
+                .setSubject(Long.toString(id))
                 .signWith(key)
                 .compact();
     }
 
     public long jwtToId(String jwt) {
-        try {
-            if(jwt == null) {
-                throw new NotAuthenticatedException("Błąd bezpieczeństwa JWT!");
-            }
+        if(jwt == null) {
+            throw new NotAuthenticatedException();
+        }
 
-            String stringifedId = Jwts.parser()
+        try {
+            String id = Jwts.parser()
                     .setSigningKey(key)
                     .parseClaimsJws(jwt)
                     .getBody()
                     .getSubject();
-
-            return Long.parseLong(stringifedId);
+            return Long.parseLong(id);
         } catch(JwtException exc) {
-            throw new NotAuthenticatedException("Błąd bezpieczeństwa JWT!");
+            throw new NotAuthenticatedException();
         }
     }
 }

@@ -23,7 +23,7 @@ public class AccountSecurityServiceDbImpl implements AccountSecurityService {
     @Override
     public void checkIfAccountIsValidById(long id) {
         if(!accountDao.findById(id).isPresent()) {
-            throw new NotAuthenticatedException("Błąd uwierzytelniania JWT!");
+            throw new NotAuthenticatedException();
         }
     }
 }
