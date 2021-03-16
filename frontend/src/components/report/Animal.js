@@ -14,7 +14,7 @@ const Animal = props => {
                 <CardText>
                     <b>Wiek</b>: {animalObj.age}
                     <br />
-                    <b>Data dołączenia</b>: {DateTimeUtils.defaultFormatDateTime(animalObj.dateOfAdd)}
+                    <b>Data dołączenia</b>: {DateTimeUtils.defaultFormatDateTime(animalObj.dateOfArrival)}
                     <br />
                     {props.privileged && <button onClick={() => props.onDelete(animalObj)} type="button" className="btn btn-secondary btn-block">Usuń zwierzę</button>}
                 </CardText>
