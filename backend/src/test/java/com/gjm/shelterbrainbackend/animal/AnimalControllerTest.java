@@ -2,10 +2,8 @@ package com.gjm.shelterbrainbackend.animal;
 
 import com.gjm.shelterbrainbackend.account.security.AccountSecurityService;
 import com.gjm.shelterbrainbackend.security.NotAuthenticatedException;
-import lombok.var;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.MockitoCore;
 import org.springframework.validation.BindingResult;
 
 import static org.mockito.Mockito.*;
